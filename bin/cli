@@ -8,7 +8,7 @@ program
   .version(version, '-v, --version');
 
 program
-  .command('build <dir>')
+  .command('build', 'build project')
   .option('-c, --clean', 'clean output dir before build')
   .option('-d, --dev', 'build development version')
   .option('-o, --output <output>', 'set output dir [dist]', 'dist')
@@ -16,26 +16,26 @@ program
   .option('-w, --watch', 'rebuild on file change')
   .option('--babel', 'build a babel+es6 project')
   .option('--ts', 'build a typescript project')
-  .action(function(dir, options) {});
+  .action(function(options) {});
 
 program
-  .command('test <dir>')
+  .command('test', 'run unit test')
   .option('-o, --output <output>', 'set output dir [dist]', 'dist')
   .option('-v, --verbose', 'output verbose information')
   .option('-w, --watch', 'rebuild on file change')
   .option('--babel', 'build a babel+es6 project')
   .option('--ts', 'build a typescript project')
-  .action(function(dir, options) {});
+  .action(function(options) {});
 
 program
-  .command('unfreeze')
-  .option('-a, --aggresive')
+  .command('unfreeze', 'unfreeze dependencies package version')
+  .option('-a, --aggresive', 'version >=')
   .action(function(options) {
     run(require('../lib/updater').unfreeze.bind(undefined, options));
   });
 
 program
-  .command('freeze')
+  .command('freeze', 'freeze dependencies package version')
   .action(function() {
     run(require('../lib/updater').freeze);
   });

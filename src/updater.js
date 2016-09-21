@@ -3,25 +3,7 @@
   */
 import path from 'path';
 import fs from 'fs';
-
-function loadConfig(cwd) {
-  const fn = path.join(cwd, 'aegis.config.js');
-  try {
-    return require(fn);
-  } catch(_) {
-    return {};
-  }
-}
-
-function loadPackage(cwd) {
-  const fn = path.join(cwd, 'package.json');
-  return require(fn);
-}
-
-function savePackage(cwd, pkg) {
-  const fn = path.join(cwd, 'package.json');
-  fs.writeFileSync(fn, JSON.stringify(pkg, null, ' '), {encoding: 'utf8'});
-}
+import { loadAegisConfig, loadPackage, savePackage } from './utils';
 
 function transform(entries, f) {
   let dirty = false;
@@ -52,7 +34,7 @@ exports.freeze = function freeze() {
   	}
     });
     if(dirty) {
-      savePackage(cwd, pkg);
+      savePackage(pkg);
     }
     resolve();
   });
@@ -61,8 +43,8 @@ exports.freeze = function freeze() {
 exports.unfreeze = function unfreeze(options) {
   return new Promise(resolve => {
     const cwd = process.cwd();
-    const config = loadConfig(cwd);
-    const pkg = loadPackage(cwd);
+    const config = loadAegisConfig();
+    const pkg = loadPackage();
     const locked = {};
     (config.locked || []).forEach(name => {locked[name] = true;});
     const prefix = options.aggresive ? '>=' : '^';
@@ -72,7 +54,7 @@ exports.unfreeze = function unfreeze(options) {
   	}
     });
     if(dirty) {
-      savePackage(cwd, pkg);
+      savePackage(pkg);
     }
     resolve();
   });
