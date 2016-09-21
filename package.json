@@ -1,0 +1,56 @@
+{
+  "name": "aegis-tools",
+  "version": "1.0.0",
+  "description": "babel+es6,typescript,react+redux编译工具",
+  "bin": {
+    "aegis": "./bin/cli"
+  },
+  "scripts": {
+    "preinstall": "export PHANTOMJS_CDNURL=http://cnpmjs.org/downloads",
+    "build": "rm -rf lib && babel src --out-dir lib",
+    "pub": "npm run build && npm publish && rm -rf lib && git push origin"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aegis-design/aegis-build.git"
+  },
+  "keywords": [
+    "babel",
+    "es6",
+    "typescript",
+    "react",
+    "redux",
+    "webpack"
+  ],
+  "author": {
+    "name": "Zhengfeng Yao",
+    "email": "yzf_xd@163.com",
+    "url": "https://github.com/aegis-design/aegis-build"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aegis-design/aegis-build/issues"
+  },
+  "homepage": "https://github.com/aegis-design/aegis-build#readme",
+  "babel": {
+    "presets": [
+      "es2015-ie",
+      "stage-0"
+    ],
+    "plugins": [
+      "add-module-exports"
+    ]
+  },
+  "dependencies": {
+    "babel-loader": "^6.2.5",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015-ie": "^6.6.2",
+    "babel-preset-stage-0": "^6.5.0",
+    "commander": "^2.9.0",
+    "webpack": "^1.13.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-core": "^6.14.0"
+  }
+}

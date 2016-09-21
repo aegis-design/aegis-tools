@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var version = require('../package').version;
+var run = require('../lib/runner').run;
+
+program
+  .version(version, '-v, --version');
+
+program
+  .command('build <dir>')
+  .option('-c, --clean', 'clean output dir before build')
+  .option('-d, --dev', 'build development version')
+  .option('-o, --output <output>', 'set output dir [dist]', 'dist')
+  .option('-v, --verbose', 'output verbose information')
+  .option('-w, --watch', 'rebuild on file change')
+  .option('--babel', 'build a babel+es6 project')
+  .option('--ts', 'build a typescript project')
+  .action(function(dir, options) {});
+
+program
+  .command('test <dir>')
+  .option('-o, --output <output>', 'set output dir [dist]', 'dist')
+  .option('-v, --verbose', 'output verbose information')
+  .option('-w, --watch', 'rebuild on file change')
+  .option('--babel', 'build a babel+es6 project')
+  .option('--ts', 'build a typescript project')
+  .action(function(dir, options) {});
+
+program
+  .command('unfreeze')
+  .option('-a, --aggresive')
+  .action(function(options) {
+    run(require('../lib/updater').unfreeze.bind(undefined, options));
+  });
+
+program
+  .command('freeze')
+  .action(function() {
+    run(require('../lib/updater').freeze);
+  });
+
+program.parse(process.argv);
