@@ -8,7 +8,7 @@ program
   .version(version, '-v, --version');
 
 program
-  .command('build', 'build project')
+  .command('build')
   .option('-c, --clean', 'clean output dir before build')
   .option('-d, --dev', 'build development version')
   .option('-o, --output <output>', 'set output dir [dist]', 'dist')
@@ -19,7 +19,7 @@ program
   .action(function(options) {});
 
 program
-  .command('test', 'run unit test')
+  .command('test')
   .option('-o, --output <output>', 'set output dir [dist]', 'dist')
   .option('-v, --verbose', 'output verbose information')
   .option('-w, --watch', 'rebuild on file change')
@@ -28,14 +28,14 @@ program
   .action(function(options) {});
 
 program
-  .command('unfreeze', 'unfreeze dependencies package version')
+  .command('unfreeze')
   .option('-a, --aggresive', 'version >=')
   .action(function(options) {
     run(require('../lib/updater').unfreeze.bind(undefined, options));
   });
 
 program
-  .command('freeze', 'freeze dependencies package version')
+  .command('freeze')
   .action(function() {
     run(require('../lib/updater').freeze);
   });
