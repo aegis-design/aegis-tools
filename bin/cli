@@ -2,7 +2,8 @@
 
 var program = require('commander');
 var version = require('../package').version;
-var run = require('../lib/runner').run;
+var run = require('../lib/run');
+var build = require('../lib/build');
 
 program
   .version(version, '-v, --version');
@@ -11,17 +12,17 @@ program
   .command('build')
   .option('-c, --clean', 'clean output dir before build')
   .option('-d, --dev', 'build development version')
-  .option('-o, --output <output>', 'set output dir [dist]', 'dist')
   .option('-v, --verbose', 'output verbose information')
   .option('-w, --watch', 'rebuild on file change')
   .option('--babel', 'build a babel+es6 project')
   .option('--ts', 'build a typescript project')
-  .action(function(options) {});
+  .action(function(options) {
+    run(build.bind(undefined, options));
+  });
 
 program
   .command('test')
-  .option('-o, --output <output>', 'set output dir [dist]', 'dist')
-  .option('-v, --verbose', 'output verbose information')
+  .option('-o, --output <output>', 'set output dir [coverage]', 'coverage')
   .option('-w, --watch', 'rebuild on file change')
   .option('--babel', 'build a babel+es6 project')
   .option('--ts', 'build a typescript project')

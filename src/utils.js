@@ -1,10 +1,11 @@
 /**
   * Created by Zhengfeng Yao on 16/9/21.
   */
+import fs from 'fs';
+import path from 'path';
+import mkdirp from 'mkdirp';
 import webpack from 'webpack';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import path from 'path';
-import fs from 'fs';
 
 const cwd = process.cwd();
 
@@ -24,6 +25,12 @@ export function loadAegisConfig() {
   } catch(_) {
     return {};
   }
+}
+
+export function makeDir(name) {
+  return new Promise((resolve, reject) => {
+    mkdirp(name, err => err ? reject(err) : resolve());
+  });
 }
 
 export function getBaseConfig(dev, verbose, autoprefixer) {
@@ -87,3 +94,5 @@ export function getBaseConfig(dev, verbose, autoprefixer) {
     },
   }
 }
+
+export function getWebpackConfig(options) {}

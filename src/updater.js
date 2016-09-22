@@ -1,8 +1,6 @@
 /**
   * Created by Zhengfeng Yao on 16/9/21.
   */
-import path from 'path';
-import fs from 'fs';
 import { loadAegisConfig, loadPackage, savePackage } from './utils';
 
 function transform(entries, f) {
@@ -23,39 +21,34 @@ function transform(entries, f) {
   return dirty;
 }
 
-exports.freeze = function freeze() {
-  return new Promise(resolve => {
-    const cwd = process.cwd();
-    const pkg = loadPackage(cwd);
-    const dirty = transform([pkg.dependencies, pkg.devDependencies], (name, version) => {
-      const mo = version.match(/^(?:[\^|\~])|(?:\>=?\s*)/);
-  	if (mo) {
-  	  return version.slice(mo[0].length);
-  	}
-    });
-    if(dirty) {
-      savePackage(pkg);
+exports.freeze = async function freeze() {
+  const cwd = process.cwd();
+  const pkg = loadPackage(cwd);
+  const dirty = transform([pkg.dependencies, pkg.devDependencies], (name, version) => {
+    const mo = version.match(/^(?:[\^|\~])|(?:\>=?\s*)/);
+    if (mo) {
+      return version.slice(mo[0].length);
     }
-    resolve();
   });
-}
+  if(dirty) {
+    savePackage(pkg);
+  }
+  await dirty;
+};
 
-exports.unfreeze = function unfreeze(options) {
-  return new Promise(resolve => {
-    const cwd = process.cwd();
-    const config = loadAegisConfig();
-    const pkg = loadPackage();
-    const locked = {};
-    (config.locked || []).forEach(name => {locked[name] = true;});
-    const prefix = options.aggresive ? '>=' : '^';
-    const dirty = transform([pkg.dependencies, pkg.devDependencies], (name, value) => {
-      if (!locked[name] && /^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(value)) {
-  	  return prefix + value;
-  	}
-    });
-    if(dirty) {
-      savePackage(pkg);
+exports.unfreeze = async function unfreeze(options) {
+  const config = loadAegisConfig();
+  const pkg = loadPackage();
+  const locked = {};
+  (config.locked || []).forEach(name => {locked[name] = true;});
+  const prefix = options.aggresive ? '>=' : '^';
+  const dirty = transform([pkg.dependencies, pkg.devDependencies], (name, value) => {
+    if (!locked[name] && /^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(value)) {
+      return prefix + value;
     }
-    resolve();
   });
-}
+  if(dirty) {
+    savePackage(pkg);
+  }
+  await dirty;
+};
