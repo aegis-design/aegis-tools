@@ -14,8 +14,7 @@ program
   .option('-d, --dev', 'build development version')
   .option('-v, --verbose', 'output verbose information')
   .option('-w, --watch', 'rebuild on file change')
-  .option('--babel', 'build a babel+es6 project')
-  .option('--ts', 'build a typescript project')
+  .option('--ts', 'build a typescript project, default babel+es6')
   .action(function(options) {
     run(build.bind(undefined, options));
   });
@@ -24,8 +23,7 @@ program
   .command('test')
   .option('-o, --output <output>', 'set output dir [coverage]', 'coverage')
   .option('-w, --watch', 'rebuild on file change')
-  .option('--babel', 'build a babel+es6 project')
-  .option('--ts', 'build a typescript project')
+  .option('--ts', 'build a typescript project, default babel+es6')
   .action(function(options) {});
 
 program

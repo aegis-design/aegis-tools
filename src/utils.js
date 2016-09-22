@@ -4,10 +4,12 @@
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
-import webpack from 'webpack';
-import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 
 const cwd = process.cwd();
+
+export function isValid(x) {
+  return !!x;
+}
 
 export function loadPackage() {
   return require(path.resolve(cwd, 'package.json'));
@@ -32,67 +34,3 @@ export function makeDir(name) {
     mkdirp(name, err => err ? reject(err) : resolve());
   });
 }
-
-export function getBaseConfig(dev, verbose, autoprefixer) {
-  return {
-    cache: dev,
-    debug: dev,
-
-    stats: {
-      colors: true,
-      reasons: dev,
-      hash: verbose,
-      version: verbose,
-      timings: true,
-      chunks: verbose,
-      chunkModules: verbose,
-      cached: verbose,
-      cachedAssets: verbose,
-    },
-
-    plugins: [
-      new ProgressBarPlugin(),
-      new webpack.optimize.OccurenceOrderPlugin(),
-    ],
-
-    resolve: {
-      extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.json'],
-    },
-
-    module: {
-      loaders: [
-        {
-          test: /\.json$/,
-          loader: 'json-loader',
-        }, {
-          test: /\.json5$/,
-          loader: 'json5-loader',
-        }, {
-          test: /\.txt$/,
-          loader: 'raw-loader',
-        }, {
-          test: /\.(svg|jpe?g|png|gif)(\?.*)?$/,
-          loader: 'url-loader?limit=10000',
-        }, {
-          test: /\.(woff\d?|ttf|eot)(\?.*)?$/,
-          loader: 'file-loader',
-        }, {
-          test: /\.est$/,
-          loader: 'babel-loader!template-string-loader'
-        }
-      ],
-    },
-
-    postcss: () => {
-      return [
-        require('postcss-nested')(),
-        require('pixrem')(),
-        require('autoprefixer')(autoprefixer),
-        require('postcss-flexibility')(),
-        require('postcss-discard-duplicates')()
-      ];
-    },
-  }
-}
-
-export function getWebpackConfig(options) {}
