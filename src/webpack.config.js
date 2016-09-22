@@ -1,11 +1,15 @@
 /**
  * Created by Zhengfeng.Yao on 16/9/22.
  */
+import path from 'path';
 import webpack from 'webpack';
 import webpackMerge from 'webpack-merge';
+import AssetsPlugin from 'assets-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import { isValid } from './utils';
+import { isValid, loadAegisConfig } from './utils';
+
+const cwd = process.cwd();
 
 export function getBaseConfig(dev, verbose, autoprefixer) {
   autoprefixer = autoprefixer || [
@@ -86,9 +90,15 @@ function style(dev, web, loader) {
 }
 
 export function getBabelWebpackConfig(dev, web, options, verbose) {
+  console.log('babel model');
   return {
+    entry: options.entry,
+    output: options.output,
     devtool: web ? (dev ? 'cheap-module-eval-source-map' : false) : 'source-map',
     target: web ? 'web' : 'node',
+    resolve: {
+      extensions: ['', '.js', '.jsx'],
+    },
     externals: [
       !web && function filter(context, request, cb) {
         const isExternal =
@@ -150,13 +160,13 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
 }
 
 export function getTSWebpackConfig(dev, web, options) {
-
+  console.log('ts model');
 }
 
 export function getWebpackConfig(options) {
-  const { dev, versose, ts } = options;
-  const aegisConfig = loadAegisConfig();
-  const baseConfig = getBaseConfig(dev, versose, aegisConfig.autoprefixer);
+  const { dev, verbose, ts } = options;
+  const aegisConfig = loadAegisConfig(dev);
+  const baseConfig = getBaseConfig(dev, verbose, aegisConfig.autoprefixer);
   const { web, node } = aegisConfig;
   const clientWebpackConfig = !web ? null : webpackMerge(baseConfig, !!ts ? getTSWebpackConfig(dev, true, web, verbose) : getBabelWebpackConfig(dev, true, web, verbose));
   const serverWebpackConfig = !node ? null : webpackMerge(baseConfig, !!ts ? getTSWebpackConfig(dev, false, node) : getBabelWebpackConfig(dev, false, node));

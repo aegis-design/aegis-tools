@@ -20,8 +20,8 @@ export function savePackage(pkg) {
   fs.writeFileSync(fn, JSON.stringify(pkg, null, ' '), {encoding: 'utf8'});
 }
 
-export function loadAegisConfig() {
-  const fn = path.join(cwd, 'aegis.config.js');
+export function loadAegisConfig(dev) {
+  const fn = path.join(cwd, `aegis.config${dev ? '.dev' : ''}.js`);
   try {
     return require(fn);
   } catch(_) {

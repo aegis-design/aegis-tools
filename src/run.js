@@ -14,5 +14,5 @@ module.exports = function run(fn, options) {
     const end = new Date();
     const time = end.getTime() - start.getTime();
     console.log(`[${format(end)}] Finished '${task.name}' after ${time} ms`);
-  });
+  }).catch(err => console.error(err.stack));
 };
