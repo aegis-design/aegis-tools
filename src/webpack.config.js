@@ -42,6 +42,11 @@ export function getBaseConfig(dev, verbose, autoprefixer) {
 
     resolve: {
       extensions: ['', '.webpack.js', '.web.js', '.json', '.json5'],
+      modulesDirectories: ['node_modules', path.join(cwd, 'node_modules'), path.join(__dirname, '../node_modules')]
+    },
+
+    resolveLoader: {
+      modulesDirectories: ['node_modules', path.join(cwd, 'node_modules'), path.join(__dirname, '../node_modules')]
     },
 
     module: {
@@ -99,6 +104,18 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
     resolve: {
       extensions: ['', '.js', '.jsx'],
     },
+    babel: {
+      presets: [
+        require.resolve('babel-preset-es2015-ie'),
+        require.resolve('babel-preset-react'),
+        require.resolve('babel-preset-stage-0'),
+        require.resolve('babel-preset-stage-1'),
+      ],
+      plugins: [
+        require.resolve('babel-plugin-transform-runtime'),
+        require.resolve('babel-plugin-transform-decorators-legacy'),
+      ],
+    },
     externals: [
       !web && function filter(context, request, cb) {
         const isExternal =
@@ -115,7 +132,7 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
             path.resolve(cwd, 'src'),
           ],
           exclude: /\.es5\.js$/,
-          loader: `${dev ? '' : 'es3ify'}!babel-loader`,
+          loader: 'babel-loader',
         },
         {
           test: /\.less$/,
