@@ -13,26 +13,25 @@ const cwd = process.cwd();
 
 export function getBaseConfig(dev, verbose, autoprefixer) {
   autoprefixer = autoprefixer || [
-      'Chrome >= 35',
-      'Firefox >= 31',
+      'last 2 versions',
+      '> 1%',
       'Explorer >= 9',
-      'Opera >= 12',
-      'Safari >= 7.1',
     ];
+  console.log('verbose: ' + verbose);
   return {
-    cache: dev,
-    debug: dev,
+    cache: !!dev,
+    debug: !!dev,
 
     stats: {
       colors: true,
-      reasons: dev,
-      hash: verbose,
-      version: verbose,
+      reasons: !!dev,
+      hash: !!verbose,
+      version: !!verbose,
       timings: true,
-      chunks: verbose,
-      chunkModules: verbose,
-      cached: verbose,
-      cachedAssets: verbose,
+      chunks: !!verbose,
+      chunkModules: !!verbose,
+      cached: !!verbose,
+      cachedAssets: !!verbose,
     },
 
     plugins: [
@@ -86,7 +85,7 @@ export function getBaseConfig(dev, verbose, autoprefixer) {
 }
 
 function style(dev, web, loader) {
-  const query = `${dev ? 'sourceMap&' : 'minimize&'}modules&localIdentName=[local]`;
+  const query = `${!!dev ? 'sourceMap&' : 'minimize&'}modules&localIdentName=[local]`;
   if (web) {
     return new ExtractTextPlugin('style', `css?${query}!${loader}`);
   } else {
@@ -95,11 +94,10 @@ function style(dev, web, loader) {
 }
 
 export function getBabelWebpackConfig(dev, web, options, verbose) {
-  console.log('babel model');
   return {
     entry: options.entry,
     output: options.output,
-    devtool: web ? (dev ? 'cheap-module-eval-source-map' : false) : 'source-map',
+    devtool: web ? (!!dev ? 'cheap-module-eval-source-map' : false) : 'source-map',
     target: web ? 'web' : 'node',
     resolve: {
       extensions: ['', '.js', '.jsx'],
@@ -127,26 +125,30 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
     module: {
       loaders: [
         {
-          test: /\.jsx?$/,
-          include: [
-            path.resolve(cwd, 'src'),
+          test: /\.js$/,
+          exclude: [
+            /\.es5\.js$/,
+            /node_modules/
           ],
-          exclude: /\.es5\.js$/,
+          loader: 'babel-loader',
+        },
+        {
+          test: /\.jsx$/,
           loader: 'babel-loader',
         },
         {
           test: /\.less$/,
-          loader: style(dev, web, 'postcss!less'),
+          loader: style(!!dev, web, 'postcss!less'),
         }, {
           test: /\.css$/,
-          loader: style(dev, web, 'postcss'),
+          loader: style(!!dev, web, 'postcss'),
         }
       ]
     },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': dev ? '"development"' : '"production"',
-        __DEV__: dev,
+        'process.env.NODE_ENV': !!dev ? '"development"' : '"production"',
+        __DEV__: !!dev,
         'process.env.BROWSER': web,
         __BROWSER__: web
       }),
@@ -157,13 +159,12 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
           processOutput: x => `module.exports = ${JSON.stringify(x)};`,
         }),
         options.extractCommon && new webpack.optimize.CommonsChunkPlugin(options.extractCommon),
-        new ExtractTextPlugin(dev ? '[name].css?[hash]' : '[name].[hash].css'),
+        new ExtractTextPlugin(!!dev ? '[name].css?[hash]' : '[name].[hash].css'),
         ...(!dev ? [
           new webpack.optimize.DedupePlugin(),
           new webpack.optimize.UglifyJsPlugin({
             compress: {
-              screw_ie8: true,
-              warnings: verbose,
+              warnings: !!verbose,
             },
           }),
           new webpack.optimize.AggressiveMergingPlugin(),

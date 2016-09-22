@@ -11,8 +11,8 @@ program
 program
   .command('build')
   .option('-c, --clean', 'clean output dir before build')
-  .option('-d, --dev', 'build development version')
-  .option('-v, --verbose', 'output verbose information')
+  .option('--dev', 'build development version')
+  .option('--verbose', 'output verbose information')
   .option('-w, --watch', 'rebuild on file change')
   .option('--ts', 'build a typescript project, default babel+es6')
   .action(function(options) {
