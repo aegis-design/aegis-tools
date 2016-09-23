@@ -21,7 +21,7 @@ module.exports = async function test(options) {
   const webpackConfig = getTestWebpackConfig(options);
   const configFile = path.join(__dirname, 'karma.conf.js');
   const plugins = [require.resolve('webpack'), require.resolve('sourcemap')];
-  const options = {
+  const opts = {
     configFile,
     singleRun: !watch,
     autoWatch: !!watch,
@@ -43,13 +43,13 @@ module.exports = async function test(options) {
   };
   if (!watch) {
     await new Promise(resolve => {
-      Server.start(options, () => {
+      Server.start(opts, () => {
         openReportOnBrowser(output);
         resolve();
       });
     });
   } else {
-    const server = new Server(options);
+    const server = new Server(opts);
     server.on('run_complete', () => {
       openReportOnBrowser(output);
     });
