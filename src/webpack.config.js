@@ -93,6 +93,21 @@ function style(dev, web, loader) {
   }
 }
 
+function spreadCommonChunk(extractCommon) {
+  if (extractCommon) {
+    if (extractCommon.constructor.name == 'Object') {
+      return [new webpack.optimize.CommonsChunkPlugin(extractCommon)];
+    }
+
+    if (extractCommon.constructor.name == 'Array') {
+      return extractCommon.filter(common => common && common.construct.name == 'Object')
+        .map(common => [new webpack.optimize.CommonsChunkPlugin(common)]);
+    }
+  }
+
+  return [];
+}
+
 export function getBabelWebpackConfig(dev, web, options, verbose) {
   return {
     entry: options.entry,
@@ -158,7 +173,7 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
           filename: 'assets.js',
           processOutput: x => `module.exports = ${JSON.stringify(x)};`,
         }),
-        options.extractCommon && new webpack.optimize.CommonsChunkPlugin(options.extractCommon),
+        ...spreadCommonChunk(options.extractCommon),
         new ExtractTextPlugin(!!dev ? '[name].css?[hash]' : '[name].[hash].css'),
         ...(!dev ? [
           new webpack.optimize.DedupePlugin(),
