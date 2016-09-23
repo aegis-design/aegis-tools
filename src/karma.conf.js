@@ -13,6 +13,5 @@ module.exports = config => {
       mocha: {}
     },
     reporters: [ 'mocha', 'coverage' ],
-    webpack: webpackConfig,
   });
 };

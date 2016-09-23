@@ -20,7 +20,7 @@ function resolvePaths(input){
   return [];
 }
 
-module.exports = function getTestWebpackConfig(options) {
+export default function getTestWebpackConfig(options) {
   const config = loadAegisConfig('.test');
   const { ts } = options;
   const { src, testPath } = config;

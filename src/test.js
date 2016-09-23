@@ -20,7 +20,7 @@ module.exports = async function test(options) {
   const { watch, verbose, port } = options;
   const webpackConfig = getTestWebpackConfig(options);
   const configFile = path.join(__dirname, 'karma.conf.js');
-  const plugins = [require.resolve('webpack'), require.resolve('sourcemap')];
+  const plugins = ['webpack', 'sourcemap'];
   const opts = {
     configFile,
     singleRun: !watch,
