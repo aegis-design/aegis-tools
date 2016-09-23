@@ -20,13 +20,28 @@ export function savePackage(pkg) {
   fs.writeFileSync(fn, JSON.stringify(pkg, null, ' '), {encoding: 'utf8'});
 }
 
-export function loadAegisConfig(dev) {
-  const fn = path.join(cwd, `aegis.config${dev ? '.dev' : ''}.js`);
+export function loadAegisConfig(prefix) {
   try {
-    return require(fn);
+    return require(path.join(cwd, `aegis.config${prefix || ''}.js`));
   } catch(_) {
+    console.log(_);
     return {};
   }
+}
+
+export function getBabelConfig() {
+  return {
+    presets: [
+      require.resolve('babel-preset-es2015-ie'),
+      require.resolve('babel-preset-react'),
+      require.resolve('babel-preset-stage-0'),
+      require.resolve('babel-preset-stage-1'),
+    ],
+    plugins: [
+      require.resolve('babel-plugin-transform-runtime'),
+      require.resolve('babel-plugin-transform-decorators-legacy'),
+    ],
+  };
 }
 
 export function makeDir(name) {

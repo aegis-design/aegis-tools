@@ -7,7 +7,7 @@ import webpackMerge from 'webpack-merge';
 import AssetsPlugin from 'assets-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import { isValid, loadAegisConfig } from './utils';
+import { isValid, loadAegisConfig, getBabelConfig } from './utils';
 
 const cwd = process.cwd();
 
@@ -117,18 +117,7 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
     resolve: {
       extensions: ['', '.js', '.jsx'],
     },
-    babel: {
-      presets: [
-        require.resolve('babel-preset-es2015-ie'),
-        require.resolve('babel-preset-react'),
-        require.resolve('babel-preset-stage-0'),
-        require.resolve('babel-preset-stage-1'),
-      ],
-      plugins: [
-        require.resolve('babel-plugin-transform-runtime'),
-        require.resolve('babel-plugin-transform-decorators-legacy'),
-      ],
-    },
+    babel: getBabelConfig(),
     externals: [
       !web && function filter(context, request, cb) {
         const isExternal =
@@ -198,7 +187,7 @@ export function getTSWebpackConfig(dev, web, options) {
 
 export function getWebpackConfig(options) {
   const { dev, verbose, ts } = options;
-  const aegisConfig = loadAegisConfig(dev);
+  const aegisConfig = loadAegisConfig(dev ? '.dev' : '');
   const baseConfig = getBaseConfig(dev, verbose, aegisConfig.autoprefixer);
   const { web, node } = aegisConfig;
   const clientWebpackConfig = !web ? null : webpackMerge(baseConfig, !!ts ? getTSWebpackConfig(dev, true, web, verbose) : getBabelWebpackConfig(dev, true, web, verbose));

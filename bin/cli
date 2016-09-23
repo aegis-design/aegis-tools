@@ -4,6 +4,7 @@ var program = require('commander');
 var version = require('../package').version;
 var run = require('../lib/run');
 var build = require('../lib/build');
+var test = require('../lib/test');
 
 program
   .version(version, '-v, --version');
@@ -21,10 +22,12 @@ program
 
 program
   .command('test')
-  .option('-o, --output <output>', 'set output dir [coverage]', 'coverage')
   .option('-w, --watch', 'rebuild on file change')
+  .option('--verbose', 'show verbose information')
   .option('--ts', 'build a typescript project, default babel+es6')
-  .action(function(options) {});
+  .action(function(options) {
+    run(test.bind(undefined, options));
+  });
 
 program
   .command('unfreeze')
