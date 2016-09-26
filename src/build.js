@@ -5,7 +5,8 @@ import run from './run';
 import copy from './copy';
 import clean from './clean';
 import bundle from './bundle';
-import { getWebpackConfig, loadAegisConfig } from './webpack.config';
+import { loadAegisConfig } from './utils';
+import { getWebpackConfig } from './webpack.config';
 
 module.exports = async function build(options) {
   if (options.clean) {

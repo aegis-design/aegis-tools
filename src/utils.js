@@ -22,6 +22,7 @@ export function savePackage(pkg) {
 
 export function loadAegisConfig(prefix) {
   try {
+    require('babel-register')(getBabelConfig());
     return require(path.resolve(cwd, `aegis.config${prefix || ''}`));
   } catch(_) {
     console.log(_);
