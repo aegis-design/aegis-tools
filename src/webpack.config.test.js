@@ -28,7 +28,12 @@ export default function getTestWebpackConfig(options) {
     devtool: 'eval',
 
     resolve: {
-      extensions: ['', '.webpack.js', '.web.js', ...(!ts ? ['.js', '.jsx'] : ['.ts', '.tsx']), '.json'].filter(isValid),
+      root: path.resolve(cwd, '.'),
+      extensions: ['', '.webpack.js', '.web.js', ...(!ts ? ['.js', '.jsx'] : ['.ts', '.tsx']), '.json'],
+      modulesDirectories: ['node_modules', path.join(cwd, 'node_modules'), path.join(__dirname, '../node_modules')]
+    },
+
+    resolveLoader: {
       modulesDirectories: ['node_modules', path.join(cwd, 'node_modules'), path.join(__dirname, '../node_modules')]
     },
 
@@ -48,7 +53,7 @@ export default function getTestWebpackConfig(options) {
           include: [
             ...resolvePaths(src),
             ...resolvePaths(testPath),
-          ],
+          ].filter(isValid),
           exclude: /\.es5\.js$/,
           loader: 'babel-loader',
         }, {

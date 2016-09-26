@@ -22,6 +22,7 @@ module.exports = async function test(options) {
   const configFile = path.join(__dirname, 'karma.conf.js');
   const plugins = ['webpack', 'sourcemap'];
   const opts = {
+    basePath: path.resolve(cwd, '.'),
     configFile,
     singleRun: !watch,
     autoWatch: !!watch,
