@@ -17,7 +17,6 @@ export function getBaseConfig(dev, verbose, autoprefixer) {
       '> 1%',
       'Explorer >= 9',
     ];
-  console.log('verbose: ' + verbose);
   return {
     cache: !!dev,
     debug: !!dev,
@@ -95,13 +94,12 @@ function style(dev, web, loader) {
 
 function spreadCommonChunk(extractCommon) {
   if (extractCommon) {
-    if (extractCommon.constructor.name == 'Object') {
-      return [new webpack.optimize.CommonsChunkPlugin(extractCommon)];
-    }
-
-    if (extractCommon.constructor.name == 'Array') {
+    if (Array.isArray(extractCommon)) {
       return extractCommon.filter(common => common && common.construct.name == 'Object')
         .map(common => [new webpack.optimize.CommonsChunkPlugin(common)]);
+    }
+    if (extractCommon.constructor.name == 'Object') {
+      return [new webpack.optimize.CommonsChunkPlugin(extractCommon)];
     }
   }
 
@@ -146,8 +144,9 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
         }, {
           test: /\.css$/,
           loader: style(!!dev, web, 'postcss'),
-        }
-      ]
+        },
+        ...(options.module && options.module.loaders ? options.module.loaders : []),
+      ].filter(isValid)
     },
     plugins: [
       new webpack.DefinePlugin({
@@ -156,6 +155,7 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
         'process.env.BROWSER': web,
         __BROWSER__: web
       }),
+      ...(options.plugins ? options.plugins : []),
       ...(web ? [
         new AssetsPlugin({
           path: path.join(cwd, options.output.path),

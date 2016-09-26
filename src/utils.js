@@ -22,7 +22,7 @@ export function savePackage(pkg) {
 
 export function loadAegisConfig(prefix) {
   try {
-    return require(path.join(cwd, `aegis.config${prefix || ''}.js`));
+    return require(path.resolve(cwd, `aegis.config${prefix || ''}`));
   } catch(_) {
     console.log(_);
     return {};
