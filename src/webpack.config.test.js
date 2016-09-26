@@ -2,6 +2,7 @@
  * Created by Zhengfeng.Yao on 16/9/23.
  */
 import path from 'path';
+import webpackMerge from 'webpack-merge';
 import { loadAegisConfig, isValid, getBabelConfig } from './utils';
 
 const cwd = process.cwd();
@@ -12,7 +13,7 @@ function resolvePaths(input){
       return [path.join(cwd, input)];
     }
 
-    if (input.constructor.name == 'Array') {
+    if (Array.isArray(input)) {
       return input.map(src => path.join(cwd, src));
     }
   }
@@ -24,7 +25,7 @@ export default function getTestWebpackConfig(options) {
   const config = loadAegisConfig('.test');
   const { ts } = options;
   const { src, testPath } = config;
-  return {
+  return webpackMerge({
     devtool: 'eval',
 
     resolve: {
@@ -71,5 +72,5 @@ export default function getTestWebpackConfig(options) {
         }
       ].filter(isValid),
     },
-  };
+  }, config.webpack);
 };

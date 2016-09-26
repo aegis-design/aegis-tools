@@ -104,24 +104,8 @@ function style(dev, web, loader) {
   }
 }
 
-function spreadCommonChunk(extractCommon) {
-  if (extractCommon) {
-    if (Array.isArray(extractCommon)) {
-      return extractCommon.filter(common => common && common.construct.name == 'Object')
-        .map(common => [new webpack.optimize.CommonsChunkPlugin(common)]);
-    }
-    if (extractCommon.constructor.name == 'Object') {
-      return [new webpack.optimize.CommonsChunkPlugin(extractCommon)];
-    }
-  }
-
-  return [];
-}
-
 export function getBabelWebpackConfig(dev, web, options, verbose) {
-  return {
-    entry: options.entry,
-    output: options.output,
+  return webpackMerge({
     devtool: web ? (!!dev ? 'cheap-module-eval-source-map' : false) : 'source-map',
     target: web ? 'web' : 'node',
     resolve: {
@@ -134,7 +118,6 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
           request.match(/^[@a-z][a-z\/\.\-0-9]*$/i);
         cb(null, Boolean(isExternal));
       },
-      ...(options.externals ? options.externals : [])
     ].filter(isValid),
     module: {
       loaders: [
@@ -156,8 +139,7 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
         }, {
           test: /\.css$/,
           loader: style(!!dev, web, 'postcss'),
-        },
-        ...(options.module && options.module.loaders ? options.module.loaders : []),
+        }
       ].filter(isValid)
     },
     plugins: [
@@ -167,14 +149,12 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
         'process.env.BROWSER': web,
         __BROWSER__: web
       }),
-      ...(options.plugins ? options.plugins : []),
       ...(web ? [
         new AssetsPlugin({
           path: path.join(cwd, options.output.path),
           filename: 'assets.js',
           processOutput: x => `module.exports = ${JSON.stringify(x)};`,
         }),
-        ...spreadCommonChunk(options.extractCommon),
         new ExtractTextPlugin(!!dev ? '[name].css?[hash]' : '[name].[hash].css'),
         ...(!dev ? [
           new webpack.optimize.DedupePlugin(),
@@ -190,7 +170,7 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
           { raw: true, entryOnly: false })
       ])
     ].filter(isValid)
-  };
+  }, options);
 }
 
 export function getTSWebpackConfig(dev, web, options) {
