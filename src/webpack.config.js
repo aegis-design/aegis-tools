@@ -59,11 +59,23 @@ export function getBaseConfig(dev, verbose, autoprefixer) {
           test: /\.txt$/,
           loader: 'raw-loader',
         }, {
-          test: /\.(svg|jpe?g|png|gif)(\?.*)?$/,
-          loader: 'url-loader?limit=10000',
+          test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url?limit=10000&minetype=application/font-woff'
         }, {
-          test: /\.(woff\d?|ttf|eot)(\?.*)?$/,
-          loader: 'file-loader',
+          test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url?limit=10000&minetype=application/font-woff'
+        }, {
+          test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url?limit=10000&minetype=application/octet-stream'
+        }, {
+          test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'file'
+        }, {
+          test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'url?limit=10000&minetype=image/svg+xml'
+        }, {
+          test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/i,
+          loader: 'url?limit=10000'
         }, {
           test: /\.est$/,
           loader: 'babel-loader!template-string-loader'
@@ -140,7 +152,7 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
         },
         {
           test: /\.less$/,
-          loader: style(!!dev, web, 'postcss!less'),
+          loader: style(!!dev, web, 'postcss!less?sourceMap'),
         }, {
           test: /\.css$/,
           loader: style(!!dev, web, 'postcss'),
