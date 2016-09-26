@@ -7,7 +7,7 @@ import gaze from 'gaze';
 import Promise from 'bluebird';
 import { makeDir } from './utils';
 
-module.exports = async function copy(source, target, watch) {
+module.exports = async function copy({ source, target }, watch) {
   const ncp = Promise.promisify(require('ncp'));
   const dir = path.dirname(target);
   if (!fs.existsSync(dir)) {
