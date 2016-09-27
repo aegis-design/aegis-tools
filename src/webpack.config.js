@@ -3,11 +3,13 @@
  */
 import path from 'path';
 import webpack from 'webpack';
+import getTS from './ts.config';
+import getBabel from './babel.config';
 import webpackMerge from 'webpack-merge';
 import AssetsPlugin from 'assets-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import { isValid, loadAegisConfig, getBabelConfig } from './utils';
+import { isValid, loadAegisConfig } from './utils';
 
 const cwd = process.cwd();
 
@@ -159,7 +161,7 @@ export function getBabelWebpackConfig() {
     resolve: {
       extensions: ['', '.js', '.jsx'],
     },
-    babel: getBabelConfig(),
+    babel: getBabel(),
     module: {
       loaders: [
         {
@@ -184,7 +186,25 @@ export function getBabelWebpackConfig() {
 }
 
 export function getTSWebpackConfig() {
-  console.log('ts model');
+  return {
+    resolve: {
+      extensions: ['', '.ts', '.tsx', '.js'],
+    },
+    module: {
+      loaders: [
+        {
+          test: /\.tsx?$/,
+          loader: 'babel!ts',
+        },
+        {
+          test: /\.est$/,
+          loader: 'ts!template-string-loader'
+        }
+      ]
+    },
+    babel: getBabel(),
+    ts: getTS()
+  };
 }
 
 function genConfig(dev, web, options, verbose, ts) {

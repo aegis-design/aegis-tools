@@ -4,6 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
+import getBabel from './babel.config';
 
 const cwd = process.cwd();
 
@@ -22,27 +23,12 @@ export function savePackage(pkg) {
 
 export function loadAegisConfig(prefix) {
   try {
-    require('babel-register')(getBabelConfig());
+    require('babel-register')(getBabel());
     return require(path.resolve(cwd, `aegis.config${prefix || ''}`));
   } catch(_) {
     console.log(_);
     return {};
   }
-}
-
-export function getBabelConfig() {
-  return {
-    presets: [
-      require.resolve('babel-preset-es2015-ie'),
-      require.resolve('babel-preset-react'),
-      require.resolve('babel-preset-stage-0'),
-      require.resolve('babel-preset-stage-1'),
-    ],
-    plugins: [
-      require.resolve('babel-plugin-transform-runtime'),
-      require.resolve('babel-plugin-transform-decorators-legacy'),
-    ],
-  };
 }
 
 export function makeDir(name) {

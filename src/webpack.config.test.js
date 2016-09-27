@@ -2,8 +2,9 @@
  * Created by Zhengfeng.Yao on 16/9/23.
  */
 import path from 'path';
+import getBabel from './babel.config';
 import webpackMerge from 'webpack-merge';
-import { loadAegisConfig, isValid, getBabelConfig } from './utils';
+import { loadAegisConfig, isValid } from './utils';
 
 const cwd = process.cwd();
 
@@ -38,7 +39,7 @@ export default function getTestWebpackConfig(options) {
       modulesDirectories: ['node_modules', path.join(cwd, 'node_modules'), path.join(__dirname, '../node_modules')]
     },
 
-    babel: getBabelConfig(),
+    babel: getBabel(),
 
     module: {
       preLoaders: [
