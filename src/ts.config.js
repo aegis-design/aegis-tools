@@ -13,7 +13,6 @@ export default function getTS() {
     },
     compileOnSave: false,
     exclude: [
-      /test/,
       /node_modules/
     ]
   };

@@ -2,6 +2,7 @@
  * Created by Zhengfeng.Yao on 16/9/23.
  */
 import path from 'path';
+import getTS from './ts.config';
 import getBabel from './babel.config';
 import webpackMerge from 'webpack-merge';
 import { loadAegisConfig, isValid } from './utils';
@@ -40,11 +41,17 @@ export default function getTestWebpackConfig(options) {
     },
 
     babel: getBabel(),
+    ts: getTS(),
 
     module: {
       preLoaders: [
         !ts && {
           test: /\.(js|jsx)$/,
+          loader: 'isparta-instrumenter-loader',
+          include: resolvePaths(src)
+        },
+        ts && {
+          test: /\.(ts|tsx)$/,
           loader: 'isparta-instrumenter-loader',
           include: resolvePaths(src)
         }
@@ -58,6 +65,19 @@ export default function getTestWebpackConfig(options) {
           ].filter(isValid),
           exclude: /\.es5\.js$/,
           loader: 'babel-loader',
+        }, !ts && {
+          test: /\.est$/,
+          loader: 'babel-loader!template-string-loader'
+        }, ts && {
+          test: /\.tsx?$/,
+          include: [
+            ...resolvePaths(src),
+            ...resolvePaths(testPath),
+          ].filter(isValid),
+          loader: 'babel-loader',
+        }, ts && {
+          test: /\.est$/,
+          loader: 'ts-loader!template-string-loader'
         }, {
           test: /\.json$/,
           loader: 'json-loader',
@@ -67,9 +87,6 @@ export default function getTestWebpackConfig(options) {
         }, {
           test: /\.(woff\d?|ttf|eot|svg|jpe?g|png|gif|txt)(\?.*)?$/,
           loader: 'null-loader',
-        }, {
-          test: /\.est$/,
-          loader: 'babel-loader!template-string-loader'
         }
       ].filter(isValid),
     },
