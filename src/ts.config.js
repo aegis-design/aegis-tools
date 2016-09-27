@@ -11,6 +11,10 @@ export default function getTS() {
       declaration: true,
       sourceMap: true
     },
-    compileOnSave: false
+    compileOnSave: false,
+    exclude: [
+      /test/,
+      /node_modules/
+    ]
   };
 }

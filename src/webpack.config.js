@@ -194,6 +194,7 @@ export function getTSWebpackConfig() {
       loaders: [
         {
           test: /\.tsx?$/,
+          exclude: /\.jsx?$/,
           loader: 'babel!ts',
         },
         {
