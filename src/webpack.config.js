@@ -76,9 +76,6 @@ export function getBaseConfig(dev, verbose, autoprefixer) {
         }, {
           test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/i,
           loader: 'url?limit=10000'
-        }, {
-          test: /\.est$/,
-          loader: 'babel-loader!template-string-loader'
         }
       ],
     },
@@ -104,14 +101,10 @@ function style(dev, web, loader) {
   }
 }
 
-export function getBabelWebpackConfig(dev, web, options, verbose) {
-  return webpackMerge({
+function getCommonWebpackConfig(dev, web, options, verbose) {
+  return {
     devtool: web ? (!!dev ? 'cheap-module-eval-source-map' : false) : 'source-map',
     target: web ? 'web' : 'node',
-    resolve: {
-      extensions: ['', '.js', '.jsx'],
-    },
-    babel: getBabelConfig(),
     externals: [
       !web && function filter(context, request, cb) {
         const isExternal =
@@ -121,18 +114,6 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
     ].filter(isValid),
     module: {
       loaders: [
-        {
-          test: /\.js$/,
-          exclude: [
-            /\.es5\.js$/,
-            /node_modules/
-          ],
-          loader: 'babel-loader',
-        },
-        {
-          test: /\.jsx$/,
-          loader: 'babel-loader',
-        },
         {
           test: /\.less$/,
           loader: style(!!dev, web, 'postcss!less?sourceMap'),
@@ -170,11 +151,46 @@ export function getBabelWebpackConfig(dev, web, options, verbose) {
           { raw: true, entryOnly: false })
       ])
     ].filter(isValid)
-  }, options);
+  };
 }
 
-export function getTSWebpackConfig(dev, web, options) {
+export function getBabelWebpackConfig() {
+  return {
+    resolve: {
+      extensions: ['', '.js', '.jsx'],
+    },
+    babel: getBabelConfig(),
+    module: {
+      loaders: [
+        {
+          test: /\.js$/,
+          exclude: [
+            /\.es5\.js$/,
+            /node_modules/
+          ],
+          loader: 'babel-loader',
+        },
+        {
+          test: /\.jsx$/,
+          loader: 'babel-loader',
+        },
+        {
+          test: /\.est$/,
+          loader: 'babel-loader!template-string-loader'
+        }
+      ]
+    },
+  };
+}
+
+export function getTSWebpackConfig() {
   console.log('ts model');
+}
+
+function genConfig(dev, web, options, verbose, ts) {
+  const commonConfig = getCommonWebpackConfig(dev, web, options, verbose);
+  const extendConfig = !!ts ? getTSWebpackConfig() : getBabelWebpackConfig();
+  return webpackMerge(commonConfig, extendConfig, options);
 }
 
 export function getWebpackConfig(options) {
@@ -182,7 +198,16 @@ export function getWebpackConfig(options) {
   const aegisConfig = loadAegisConfig(dev ? '.dev' : '');
   const baseConfig = getBaseConfig(dev, verbose, aegisConfig.autoprefixer);
   const { web, node } = aegisConfig;
-  const clientWebpackConfig = !web ? null : webpackMerge(baseConfig, !!ts ? getTSWebpackConfig(dev, true, web, verbose) : getBabelWebpackConfig(dev, true, web, verbose));
-  const serverWebpackConfig = !node ? null : webpackMerge(baseConfig, !!ts ? getTSWebpackConfig(dev, false, node) : getBabelWebpackConfig(dev, false, node));
-  return [clientWebpackConfig, serverWebpackConfig].filter(isValid);
+  if (!web && !node) {
+    console.log('Do not find web or node config.');
+    return [];
+  }
+  const webpackConfigs = [];
+  if (web) {
+    webpackConfigs.push(webpackMerge(baseConfig, genConfig(dev, true, web, verbose, ts)));
+  }
+  if (node) {
+    webpackConfigs.push(webpackMerge(baseConfig, genConfig(dev, false, node, verbose, ts)));
+  }
+  return webpackConfigs;
 }
