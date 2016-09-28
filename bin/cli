@@ -4,6 +4,7 @@ var program = require('commander');
 var version = require('../package').version;
 var run = require('../lib/run');
 var build = require('../lib/build');
+var start = require('../lib/start');
 var test = require('../lib/test');
 
 program
@@ -18,6 +19,15 @@ program
   .option('--ts', 'build a typescript project, default babel+es6')
   .action(function(options) {
     run(build.bind(undefined, options));
+  });
+
+program
+  .command('start')
+  .option('-c, --clean', 'clean output dir before build')
+  .option('--dev', 'build development version')
+  .option('--node', 'start node server, default webpack dev server.')
+  .action(function(options) {
+    run(start.bind(undefined, options));
   });
 
 program

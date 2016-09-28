@@ -8,12 +8,11 @@ export default function getTS() {
       jsx: 'preserve',
       moduleResolution: 'node',
       allowSyntheticDefaultImports: true,
-      declaration: true,
       sourceMap: true
     },
     compileOnSave: false,
     exclude: [
-      /node_modules/
+      "node_modules"
     ]
   };
 }

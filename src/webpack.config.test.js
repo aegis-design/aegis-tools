@@ -41,17 +41,12 @@ export default function getTestWebpackConfig(options) {
     },
 
     babel: getBabel(),
-    ts: getTS(),
+    ts: Object.assign(getTS(), config.ts),
 
     module: {
       preLoaders: [
         !ts && {
           test: /\.(js|jsx)$/,
-          loader: 'isparta-instrumenter-loader',
-          include: resolvePaths(src)
-        },
-        ts && {
-          test: /\.(ts|tsx)$/,
           loader: 'isparta-instrumenter-loader',
           include: resolvePaths(src)
         }
@@ -74,7 +69,7 @@ export default function getTestWebpackConfig(options) {
             ...resolvePaths(src),
             ...resolvePaths(testPath),
           ].filter(isValid),
-          loader: 'babel-loader',
+          loader: 'babel-loader!ts-loader',
         }, ts && {
           test: /\.est$/,
           loader: 'ts-loader!template-string-loader'

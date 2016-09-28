@@ -16,7 +16,7 @@ module.exports = async function build(options) {
   }
   const config = loadAegisConfig(options.dev ? '.dev' : '');
   if (config.copy && config.copy.source && config.copy.target) {
-    await run(copy.bind(undefined, config.copy, options));
+    await run(copy.bind(undefined, config.copy));
   }
   await run(bundle.bind(undefined, options));
 };

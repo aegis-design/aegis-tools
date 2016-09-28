@@ -18,7 +18,7 @@ module.exports = async function copy({ source, target }, watch) {
 
   if (watch) {
     const watcher = await new Promise((resolve, reject) => {
-      gaze(`${path.join(source, '**/*.*')}`, (err, val) => err ? reject(err) : resolve(val));
+      gaze(path.join(source, '**/*.*'), (err, val) => err ? reject(err) : resolve(val));
     });
     watcher.on('changed', async (file) => {
       const relPath = file.substr(path.join(process.cwd(), source).length);
