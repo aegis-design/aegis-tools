@@ -32,7 +32,7 @@ export default function getTestWebpackConfig(options) {
 
     resolve: {
       root: path.resolve(cwd, '.'),
-      extensions: ['', '.webpack.js', '.web.js', ...(!ts ? ['.js', '.jsx'] : ['.ts', '.tsx']), '.json'],
+      extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx', '.ts', '.tsx', '.json'],
       modulesDirectories: ['node_modules', path.join(cwd, 'node_modules'), path.join(__dirname, '../node_modules')]
     },
 
@@ -45,14 +45,14 @@ export default function getTestWebpackConfig(options) {
 
     module: {
       preLoaders: [
-        !ts && {
+        {
           test: /\.(js|jsx)$/,
           loader: 'isparta-instrumenter-loader',
           include: resolvePaths(src)
         }
-      ].filter(isValid),
+      ],
       loaders: [
-        !ts && {
+        {
           test: /\.jsx?$/,
           include: [
             ...resolvePaths(src),
@@ -60,7 +60,7 @@ export default function getTestWebpackConfig(options) {
           ].filter(isValid),
           exclude: /\.es5\.js$/,
           loader: 'babel-loader',
-        }, !ts && {
+        }, {
           test: /\.est$/,
           loader: 'babel-loader!template-string-loader'
         }, ts && {
@@ -84,6 +84,13 @@ export default function getTestWebpackConfig(options) {
           loader: 'null-loader',
         }
       ].filter(isValid),
+      postLoaders: [
+        {
+          test: /\.(ts|tsx)$/,
+          loader: 'isparta-instrumenter',
+          include: resolvePaths(src)
+        }
+      ],
     },
   }, config.webpack);
 };
