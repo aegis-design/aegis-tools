@@ -117,6 +117,18 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
     module: {
       loaders: [
         {
+          test: /\.sass$/,
+          loader: style(!!dev, web, 'postcss!sass?sourceMap'),
+        },
+        {
+          test: /\.scss$/,
+          loader: style(!!dev, web, 'postcss!sass?sourceMap'),
+        },
+        {
+          test: /\.styl$/,
+          loader: style(!!dev, web, 'postcss!stylus?sourceMap'),
+        },
+        {
           test: /\.less$/,
           loader: style(!!dev, web, 'postcss!less?sourceMap'),
         }, {
