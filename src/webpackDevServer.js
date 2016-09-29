@@ -2,6 +2,7 @@
  * Created by Zhengfeng.Yao on 16/9/22.
  */
 import path from 'path';
+import open from 'open';
 import webpack from 'webpack';
 import DevServer from 'webpack-dev-server';
 import { getWebpackConfig } from './webpack.config';
@@ -12,7 +13,7 @@ export default class WebpackDevServer {
     this.config.port = this.config.port || 8080;
     this.config.output.publicPath = this.config.output.publicPath || this.config.output.path;
     this.config.devServer = this.config.devServer || {
-        contentBase: path.join(process.cwd, 'src'),
+        contentBase: path.join(process.cwd(), this.config.output.path),
         historyApiFallback: true,
         hot: true,
         port: this.config.port,

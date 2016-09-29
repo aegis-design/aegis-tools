@@ -97,7 +97,7 @@ export function getBaseConfig(dev, verbose, autoprefixer) {
 function style(dev, web, loader) {
   const query = `${!!dev ? 'sourceMap&' : 'minimize&'}modules&localIdentName=[local]`;
   if (web) {
-    return new ExtractTextPlugin('style', `css?${query}!${loader}`);
+    return ExtractTextPlugin.extract('style', `css?${query}!${loader}`);
   } else {
     return `css/locals?${query}!${loader}`;
   }
