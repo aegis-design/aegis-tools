@@ -232,7 +232,7 @@ export function getWebpackConfig(options) {
   const baseConfig = getBaseConfig(dev, verbose, aegisConfig.autoprefixer);
   const { web, node } = aegisConfig;
   if (!web && !node) {
-    console.log('Do not find web or node config.');
+    console.log('Do not find client or node config.');
     return [];
   }
   const webpackConfigs = [];
