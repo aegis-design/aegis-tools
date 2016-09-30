@@ -63,7 +63,6 @@ export default class WebpackDevServer {
     this.config = getWebpackConfig(options)[0];
     this.config.port = this.config.port || 9090;
     this.config.output.publicPath = getPublicPath(this.config);
-    console.log(this.config.output.publicPath);
     const base = path.join(cwd, this.config.output.path);
     this.config.devServer = this.config.devServer || {
         contentBase: base,
