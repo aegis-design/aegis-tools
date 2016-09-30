@@ -1,9 +1,10 @@
 /**
-  * Created by Zhengfeng Yao on 16/9/21.
-  */
+ * Created by Zhengfeng Yao on 16/9/21.
+ */
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
+import webpack from 'webpack';
 import getBabel from './babel.config';
 
 const cwd = process.cwd();
@@ -25,7 +26,7 @@ export function loadAegisConfig(prefix) {
   try {
     require('babel-register')(getBabel());
     return require(path.resolve(cwd, `aegis.config${prefix || ''}`));
-  } catch(_) {
+  } catch (_) {
     console.log(_);
     return {};
   }

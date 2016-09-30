@@ -5,10 +5,10 @@ import run from './run';
 import path from 'path';
 import clean from './clean';
 import copy from './copy';
-import NodeServer from './nodeServer';
-import { loadAegisConfig } from './utils';
-import Browsersync from 'browser-sync';
 import webpack from 'webpack';
+import NodeServer from './nodeServer';
+import Browsersync from 'browser-sync';
+import { loadAegisConfig } from './utils';
 import webpackMiddleware from 'webpack-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import WebpackDevServer from './webpackDevServer';
@@ -54,11 +54,11 @@ module.exports = async function start(options) {
           .module
           .loaders
           .filter(x => x.loader.indexOf('babel') !== -1)
-          .forEach(x => (x.query = { // eslint-disable-line no-param-reassign
-            // Wraps all React components into arbitrary transforms
-            // https://github.com/gaearon/babel-plugin-react-transform
+          .forEach(x => (x.query = {
             plugins: [
-              ['react-transform', {
+              ...config.babel.plugins,
+              [
+                require.resolve('babel-plugin-react-transform'), {
                 transforms: [
                   {
                     transform: 'react-transform-hmr',
