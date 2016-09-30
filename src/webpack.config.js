@@ -137,6 +137,9 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
         }
       ].filter(isValid)
     },
+    resolve: {
+      extensions: ['.css', '.less', '.sass', '.scss', '.styl']
+    },
     plugins: [
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': !!dev ? '"development"' : '"production"',

@@ -80,7 +80,7 @@ export default function getTestWebpackConfig(options) {
           test: /\.json5$/,
           loader: 'json5-loader',
         }, {
-          test: /\.(woff\d?|ttf|eot|svg|jpe?g|png|gif|txt)(\?.*)?$/,
+          test: /\.(woff\d?|ttf|eot|svg|jpe?g|png|gif|txt|css|less|sass|scss|styl)(\?.*)?$/,
           loader: 'null-loader',
         }
       ].filter(isValid),
