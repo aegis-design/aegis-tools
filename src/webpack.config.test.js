@@ -28,7 +28,7 @@ export default function getTestWebpackConfig(options) {
   const { ts } = options;
   const { src, testPath } = config;
   return webpackMerge({
-    devtool: 'eval',
+    devtool: 'source-map',
 
     resolve: {
       root: path.resolve(cwd, '.'),
@@ -42,15 +42,13 @@ export default function getTestWebpackConfig(options) {
 
     babel: getBabel(),
     ts: Object.assign(getTS(), config.ts),
+    isparta: {
+      embedSource: true,
+      noAutoWrap: true,
+      babel: getBabel(),
+    },
 
     module: {
-      preLoaders: [
-        {
-          test: /\.(js|jsx)$/,
-          loader: 'isparta-instrumenter-loader',
-          include: resolvePaths(src)
-        }
-      ],
       loaders: [
         {
           test: /\.jsx?$/,
@@ -84,13 +82,20 @@ export default function getTestWebpackConfig(options) {
           loader: 'null-loader',
         }
       ].filter(isValid),
-      postLoaders: [
+      preLoaders: [
         {
-          test: /\.(ts|tsx)$/,
-          loader: 'isparta-instrumenter',
+          test: /\.(js|jsx)$/,
+          loader: 'isparta',
           include: resolvePaths(src)
         }
       ],
+      postLoaders: [
+        {
+          test: /\.(ts|tsx)$/,
+          loader: 'istanbul-instrumenter',
+          include: resolvePaths(src)
+        }
+      ]
     },
   }, config.webpack);
 };

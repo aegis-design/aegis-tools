@@ -8,7 +8,7 @@ module.exports = config => {
     basePath: path.resolve(process.cwd(), '.'),
     browsers: [ 'PhantomJS' ],
     captureTimeout: 60000,
-    frameworks: [ 'mocha', 'chai' ],
+    frameworks: [ 'mocha', 'chai', 'source-map-support' ],
     client: {
       mocha: {}
     },
