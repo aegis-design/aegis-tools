@@ -9,6 +9,7 @@ import webpackMerge from 'webpack-merge';
 import AssetsPlugin from 'assets-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
+import FlowStatusWebpackPlugin from 'flow-status-webpack-plugin';
 import { isValid, loadAegisConfig } from './utils';
 
 const cwd = process.cwd();
@@ -146,6 +147,9 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
         __DEV__: !!dev,
         'process.env.BROWSER': web,
         __BROWSER__: web
+      }),
+      new FlowStatusWebpackPlugin({
+        failOnError: true
       }),
       ...(web ? [
         new AssetsPlugin({
