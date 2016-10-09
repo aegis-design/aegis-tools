@@ -64,10 +64,10 @@ export default class WebpackDevServer {
     this.config.port = this.config.port || 9090;
     this.config.output.publicPath = getPublicPath(this.config);
     const base = path.join(cwd, this.config.output.path);
-    this.config.devServer = this.config.devServer || {
-        contentBase: base,
-        hot: true,
-      };
+    this.config.devServer = Object.assign({
+      contentBase: base,
+      hot: true,
+    }, this.config.devServer);
     this.config.output.path = base;
     addHot(this.config);
   }

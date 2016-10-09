@@ -2,6 +2,7 @@
  * Created by Zhengfeng.Yao on 16/9/22.
  */
 import path from 'path';
+import chalk from 'chalk';
 import webpack from 'webpack';
 import getTS from './ts.config';
 import getBabel from './babel.config';
@@ -142,6 +143,7 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
       extensions: ['.css', '.less', '.sass', '.scss', '.styl']
     },
     plugins: [
+      !dev && new webpack.NoErrorsPlugin(),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': !!dev ? '"development"' : '"production"',
         __DEV__: !!dev,
@@ -149,7 +151,12 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
         __BROWSER__: web
       }),
       new FlowStatusWebpackPlugin({
-        failOnError: true
+        failOnError: true,
+        onSuccess: () => console.log(chalk.bold.green('Flow check success!')),
+        onError: () => {
+          console.log(chalk.bold.red('Flow check failed!'));
+          return false;
+        }
       }),
       ...(web ? [
         new AssetsPlugin({
