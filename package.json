@@ -1,6 +1,6 @@
 {
   "name": "aegis-tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "babel+es6,typescript,react+redux编译工具",
   "bin": {
     "aegis": "./bin/cli"
@@ -25,13 +25,13 @@
   "author": {
     "name": "Zhengfeng Yao",
     "email": "yzf_xd@163.com",
-    "url": "https://github.com/aegis-design/aegis-build"
+    "url": "https://github.com/aegis-design/aegis-tools"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/aegis-design/aegis-build/issues"
+    "url": "https://github.com/aegis-design/aegis-tools/issues"
   },
-  "homepage": "https://github.com/aegis-design/aegis-build#readme",
+  "homepage": "https://github.com/aegis-design/aegis-tools#readme",
   "babel": {
     "presets": [
       "es2015-ie",
