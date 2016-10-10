@@ -12,6 +12,5 @@ module.exports = config => {
     client: {
       mocha: {}
     },
-    reporters: [ 'mocha', 'coverage' ],
   });
 };

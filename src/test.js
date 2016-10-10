@@ -4,7 +4,7 @@
 import path from 'path';
 import Server from 'karma/lib/server';
 import open from 'open';
-import { loadAegisConfig } from './utils';
+import { loadAegisConfig, isValid } from './utils';
 import getTestWebpackConfig from './webpack.config.test';
 
 const cwd = process.cwd();
@@ -17,7 +17,7 @@ module.exports = async function test(options) {
   process.env.NODE_ENV = 'test';
   const aegisConfig = loadAegisConfig('.test');
   const { files, output } = aegisConfig;
-  const { watch, verbose, port } = options;
+  const { watch, verbose, port, ts } = options;
   const webpackConfig = getTestWebpackConfig(options);
   const configFile = path.join(__dirname, 'karma.conf.js');
   const plugins = ['webpack', 'sourcemap'];
@@ -33,11 +33,12 @@ module.exports = async function test(options) {
       result[file] = plugins;
       return result;
     }, {}),
+    reporters: [ 'mocha', 'coverage' ].filter(isValid),
     coverageReporter: {
       dir: output,
       reporters: [
-        { type: 'html', subdir: '.' },
-        { type: 'text' }
+        { type: 'text', subdir: '.' },
+        { type: 'html', subdir: '.' }
       ]
     },
     logLevel: `${!!verbose ? 'debug': 'info'}`

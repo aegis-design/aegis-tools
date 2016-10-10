@@ -28,7 +28,7 @@ export default function getTestWebpackConfig(options) {
   const { ts } = options;
   const { src, testPath } = config;
   return webpackMerge({
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
 
     resolve: {
       root: path.resolve(cwd, '.'),
