@@ -10,14 +10,14 @@ import getTestWebpackConfig from './webpack.config.test';
 const cwd = process.cwd();
 
 function openReportOnBrowser(output) {
-  open(`file://${path.join(cwd, output, 'index.html')}`);
+  open(`file://${path.join(cwd, output, 'html', 'index.html')}`);
 }
 
 module.exports = async function test(options) {
   process.env.NODE_ENV = 'test';
   const aegisConfig = loadAegisConfig('.test');
   const { files, output } = aegisConfig;
-  const { watch, verbose, port, ts } = options;
+  const { watch, verbose, port } = options;
   const webpackConfig = getTestWebpackConfig(options);
   const configFile = path.join(__dirname, 'karma.conf.js');
   const plugins = ['webpack', 'sourcemap'];
@@ -37,8 +37,8 @@ module.exports = async function test(options) {
     coverageReporter: {
       dir: output,
       reporters: [
-        { type: 'text', subdir: '.' },
-        { type: 'html', subdir: '.' }
+        { type: 'json', subdir: './json' },
+        { type: 'html', subdir: './html' }
       ]
     },
     logLevel: `${!!verbose ? 'debug': 'info'}`
