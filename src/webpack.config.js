@@ -114,16 +114,10 @@ function style(dev, web, loader) {
 }
 
 function getCommonWebpackConfig(dev, web, options, verbose) {
+  const target = web ? 'web' : 'node';
   return {
     devtool: web ? (!!dev ? 'cheap-module-eval-source-map' : false) : 'source-map',
-    target: web ? 'web' : 'node',
-    // externals: [
-    //   !web && function filter(context, request, cb) {
-    //     const isExternal =
-    //       request.match(/^[@a-z][a-z\/\.\-0-9]*$/i);
-    //     cb(null, Boolean(isExternal));
-    //   },
-    // ].filter(isValid),
+    target: target,
     module: {
       loaders: [
         {
@@ -160,10 +154,9 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
       }),
       new FlowStatusWebpackPlugin({
         failOnError: true,
-        onSuccess: () => console.log(chalk.bold.green('Flow check success!')),
+        onSuccess: () => console.log(chalk.bold.green(`${target} flow check success!`)),
         onError: () => {
-          console.log(chalk.bold.red('Flow check failed!'));
-          return false;
+          console.log(chalk.bold.red(`${target} flow check failed!`));
         }
       }),
       ...(web ? [

@@ -6,7 +6,7 @@ import path from 'path';
 import clean from './clean';
 import copy from './copy';
 import webpack from 'webpack';
-import NodeServer from './nodeServer';
+import nodeServer from './nodeServer';
 import Browsersync from 'browser-sync';
 import { loadAegisConfig, isValid } from './utils';
 import webpackMiddleware from 'webpack-middleware';
@@ -31,7 +31,7 @@ module.exports = async function start(options) {
     await server.run();
   }
   if (node) {
-    const server = new NodeServer(options);
+    const runServer = nodeServer(options);
     await new Promise(resolve => {
       webpackConfig.filter(x => x.target !== 'node').forEach(config => {
         if (Array.isArray(config.entry)) {
@@ -98,7 +98,7 @@ module.exports = async function start(options) {
         .map(compiler => webpackHotMiddleware(compiler));
 
       let handleServerBundleComplete = () => {
-        server.run((err, host) => {
+        runServer((err, host) => {
           if (!err) {
             const bs = Browsersync.create();
             bs.init({
@@ -111,7 +111,7 @@ module.exports = async function start(options) {
 
               files: [aegisConfig.copy && aegisConfig.copy.source && path.join(aegisConfig.copy.source, '**/*.*')].filter(isValid),
             }, resolve);
-            handleServerBundleComplete = server.run;
+            handleServerBundleComplete = runServer;
           }
         });
       };

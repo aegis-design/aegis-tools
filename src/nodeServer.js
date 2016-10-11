@@ -7,22 +7,14 @@ import { getWebpackConfig } from './webpack.config';
 
 // Should match the text string used in `server.listen(...)`
 const RUNNING_REGEXP = /The server is running at http:\/\/(.*?)\//;
+let server;
 
-// Launch or restart the Node.js server
-export default class NodeServer {
-  constructor(options) {
-    const webpackConfig = getWebpackConfig(options);
-    const { output } = webpackConfig.find(x => x.target === 'node');
-    this.serverPath = path.join(output.path, output.filename);
-    process.on('exit', () => {
-      if (this.server) {
-        this.server.kill('SIGTERM');
-      }
-    });
-  }
+function nodeServer(options) {
+  const webpackConfig = getWebpackConfig(options);
+  const { output } = webpackConfig.find(x => x.target === 'node');
+  const serverPath = path.join(output.path, output.filename);
 
-  run(cb) {
-    const self = this;
+  return cb => {
     function onStdOut(data) {
       const time = new Date().toTimeString();
       const match = data.toString('utf8').match(RUNNING_REGEXP);
@@ -31,24 +23,32 @@ export default class NodeServer {
       process.stdout.write(data);
 
       if (match) {
-        self.server.stdout.removeListener('data', onStdOut);
-        self.server.stdout.on('data', x => process.stdout.write(x));
+        server.stdout.removeListener('data', onStdOut);
+        server.stdout.on('data', x => process.stdout.write(x));
         if (cb) {
           cb(null, match[1]);
         }
       }
     }
 
-    if (self.server) {
-      self.server.kill('SIGTERM');
+    if (server) {
+      server.kill('SIGTERM');
     }
 
-    self.server = cp.spawn('node', [self.serverPath], {
+    server = cp.spawn('node', [serverPath], {
       env: Object.assign({ NODE_ENV: 'development' }, process.env),
       silent: false,
     });
 
-    self.server.stdout.on('data', onStdOut);
-    self.server.stderr.on('data', x => process.stderr.write(x));
+    server.stdout.on('data', onStdOut);
+    server.stderr.on('data', x => process.stderr.write(x));
   }
 }
+
+process.on('exit', () => {
+  if (server) {
+    server.kill('SIGTERM');
+  }
+});
+
+export default nodeServer;
