@@ -8,7 +8,7 @@ import copy from './copy';
 import webpack from 'webpack';
 import NodeServer from './nodeServer';
 import Browsersync from 'browser-sync';
-import { loadAegisConfig } from './utils';
+import { loadAegisConfig, isValid } from './utils';
 import webpackMiddleware from 'webpack-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import WebpackDevServer from './webpackDevServer';
@@ -74,13 +74,17 @@ module.exports = async function start(options) {
             ],
           }));
       });
+      webpackConfig.forEach(config => {
+        config.output.publicPath = '/';
+        config.output.sourcePrefix = '  ';
+      });
 
       const bundler = webpack(webpackConfig);
       const wpMiddleware = webpackMiddleware(bundler, {
 
         // IMPORTANT: webpack middleware can't access config,
         // so we should provide publicPath by ourselves
-        publicPath: webpackConfig[0].output.publicPath || webpackConfig[0].output.path,
+        publicPath: '/',
 
         // Pretty colored output
         stats: webpackConfig[0].stats,
@@ -98,14 +102,14 @@ module.exports = async function start(options) {
           if (!err) {
             const bs = Browsersync.create();
             bs.init({
-              ...(DEBUG ? {} : { notify: false, ui: false }),
+              ...(options.dev ? {} : { notify: false, ui: false }),
 
               proxy: {
                 target: host,
                 middleware: [wpMiddleware, ...hotMiddlewares],
               },
 
-              files: [path.join(source, '**/*.*')],
+              files: [aegisConfig.copy && aegisConfig.copy.source && path.join(aegisConfig.copy.source, '**/*.*')].filter(isValid),
             }, resolve);
             handleServerBundleComplete = server.run;
           }

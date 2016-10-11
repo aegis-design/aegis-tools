@@ -7,7 +7,6 @@ import webpack from 'webpack';
 import getTS from './ts.config';
 import getBabel from './babel.config';
 import webpackMerge from 'webpack-merge';
-import AssetsPlugin from 'assets-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import FlowStatusWebpackPlugin from 'flow-status-webpack-plugin';
@@ -35,6 +34,15 @@ export function getBaseConfig(dev, verbose, autoprefixer) {
       chunkModules: !!verbose,
       cached: !!verbose,
       cachedAssets: !!verbose,
+    },
+
+    node: {
+      console: false,
+      global: false,
+      process: false,
+      Buffer: false,
+      __filename: false,
+      __dirname: false,
     },
 
     plugins: [
@@ -109,13 +117,13 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
   return {
     devtool: web ? (!!dev ? 'cheap-module-eval-source-map' : false) : 'source-map',
     target: web ? 'web' : 'node',
-    externals: [
-      !web && function filter(context, request, cb) {
-        const isExternal =
-          request.match(/^[@a-z][a-z\/\.\-0-9]*$/i);
-        cb(null, Boolean(isExternal));
-      },
-    ].filter(isValid),
+    // externals: [
+    //   !web && function filter(context, request, cb) {
+    //     const isExternal =
+    //       request.match(/^[@a-z][a-z\/\.\-0-9]*$/i);
+    //     cb(null, Boolean(isExternal));
+    //   },
+    // ].filter(isValid),
     module: {
       loaders: [
         {
@@ -159,11 +167,6 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
         }
       }),
       ...(web ? [
-        new AssetsPlugin({
-          path: path.join(cwd, options.output.path),
-          filename: 'assets.js',
-          processOutput: x => `module.exports = ${JSON.stringify(x)};`,
-        }),
         new ExtractTextPlugin(!!dev ? '[name].css?[hash]' : '[name].[hash].css'),
         ...(!dev ? [
           new webpack.optimize.DedupePlugin(),
