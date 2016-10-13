@@ -36,7 +36,11 @@ npm install aegis-tools --save-dev
     'last 2 versions',
     '> 1%',
     'Explorer >= 9',
-  ]
+  ],
+  copy: {                       // 复制功能, watch模式时会监听变化
+    source: xxx,
+    target: xxx
+  }
 }
 ```
 单元测试配置说明
