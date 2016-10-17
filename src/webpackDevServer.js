@@ -66,6 +66,7 @@ export default class WebpackDevServer {
     const base = path.join(cwd, this.config.output.path);
     this.config.devServer = Object.assign({
       contentBase: base,
+      historyApiFallback: true,
       hot: true,
     }, this.config.devServer);
     this.config.output.path = base;
