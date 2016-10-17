@@ -21,7 +21,7 @@ module.exports = async function start(options) {
     await run(clean.bind(undefined, dirs));
   }
   const aegisConfig = loadAegisConfig(options.dev ? '.dev' : '');
-  if (aegisConfig.copy && aegisConfig.copy.source && aegisConfig.copy.target) {
+  if (aegisConfig.copy) {
     await run(copy.bind(undefined, aegisConfig.copy, true));
   }
 

@@ -4,10 +4,11 @@
 import fs from 'fs';
 import path from 'path';
 import gaze from 'gaze';
+import chalk from 'chalk';
 import Promise from 'bluebird';
 import { makeDir } from './utils';
 
-module.exports = async function copy({ source, target }, watch) {
+async function copyFiles(source, target , watch) {
   const ncp = Promise.promisify(require('ncp'));
   const dir = path.dirname(target);
   if (!fs.existsSync(dir)) {
@@ -25,5 +26,25 @@ module.exports = async function copy({ source, target }, watch) {
       console.log(`${relPath} changed`);
       await ncp(`${paht.join(source, relPath)}`, `${path.join(target, relPath)}`);
     });
+  }
+}
+
+module.exports = async function copy(task, watch) {
+  if (task.constructor.name == 'Array') {
+    for (let i = 0; i < task.length; i++) {
+      const { source, target } = task[i];
+      if (source && target) {
+        await copyFiles(source, target, watch);
+      }
+    }
+  } else if (task.constructor.name == 'Object') {
+    const { source, target } = task;
+    if (source && target) {
+      await copyFiles(source, target, watch);
+    } else {
+      await console.log(chalk.bold.red('No copy task. Source and target should not be null.'));
+    }
+  } else {
+    await console.log(chalk.bold.red('No copy task.'));
   }
 };

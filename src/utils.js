@@ -4,7 +4,6 @@
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
-import webpack from 'webpack';
 import getBabel from './babel.config';
 
 const cwd = process.cwd();
