@@ -74,10 +74,6 @@ module.exports = async function start(options) {
             ],
           }));
       });
-      webpackConfig.forEach(config => {
-        config.output.publicPath = '/';
-        config.output.sourcePrefix = '  ';
-      });
 
       const bundler = webpack(webpackConfig);
       const wpMiddleware = webpackMiddleware(bundler, {
@@ -97,6 +93,15 @@ module.exports = async function start(options) {
         .filter(compiler => compiler.options.target !== 'node')
         .map(compiler => webpackHotMiddleware(compiler));
 
+      let files = [];
+      if (aegisConfig.copy) {
+        if (Array.isArray(aegisConfig.copy)) {
+          files = aegisConfig.copy.map(source => path.join(source, '**/*.*'));
+        } else {
+          files.push(path.join(aegisConfig.copy.source, '**/*.*'));
+        }
+      }
+
       let handleServerBundleComplete = () => {
         runServer((err, host) => {
           if (!err) {
@@ -109,7 +114,7 @@ module.exports = async function start(options) {
                 middleware: [wpMiddleware, ...hotMiddlewares],
               },
 
-              files: [aegisConfig.copy && aegisConfig.copy.source && path.join(aegisConfig.copy.source, '**/*.*')].filter(isValid),
+              files,
             }, resolve);
             handleServerBundleComplete = runServer;
           }

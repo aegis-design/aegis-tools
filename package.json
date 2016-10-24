@@ -1,6 +1,6 @@
 {
   "name": "aegis-tools",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "babel+es6,typescript,react+redux编译工具",
   "bin": {
     "aegis": "./bin/cli"
