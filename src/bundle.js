@@ -7,7 +7,7 @@ import { getWebpackConfig } from './webpack.config';
 module.exports = function bundle(options) {
   return new Promise((resolve, reject) => {
     const webpackConfig = getWebpackConfig(options);
-    webpack(webpackConfig).run((err, stats) => {
+    const finished = (err, stats) => {
       if (err) {
         console.log(err);
         return reject(err);
@@ -15,6 +15,11 @@ module.exports = function bundle(options) {
 
       console.log(stats.toString(webpackConfig[0].stats));
       return resolve();
-    });
+    };
+    if (options.watch) {
+      webpack(webpackConfig).watch({}, finished);
+    } else {
+      webpack(webpackConfig).run(finished);
+    }
   });
 };
