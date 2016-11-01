@@ -148,7 +148,7 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
         __BROWSER__: web
       }),
       ...(web ? [
-        new ExtractTextPlugin(!!dev ? '[name].css?[hash]' : '[name].[hash].css'),
+        new ExtractTextPlugin(options.fileName ? `${options.fileName}.css` : (!!dev ? '[name].css?[hash]' : '[name].[hash].css')),
         ...(!dev ? [
           new webpack.optimize.DedupePlugin(),
           new webpack.optimize.UglifyJsPlugin({
