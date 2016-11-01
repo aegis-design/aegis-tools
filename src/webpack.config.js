@@ -141,9 +141,6 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
         }
       ].filter(isValid)
     },
-    resolve: {
-      extensions: ['.css', '.less', '.sass', '.scss', '.styl']
-    },
     plugins: [
       !dev && new webpack.NoErrorsPlugin(),
       new webpack.DefinePlugin({
