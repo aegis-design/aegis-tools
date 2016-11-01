@@ -11,8 +11,7 @@ export default function getBabel() {
     ],
     plugins: [
       require.resolve('babel-plugin-transform-decorators-legacy'),
-      require.resolve('babel-plugin-transform-runtime'),
-      require.resolve('babel-plugin-transform-flow-strip-types')
+      require.resolve('babel-plugin-transform-runtime')
     ],
   };
 }

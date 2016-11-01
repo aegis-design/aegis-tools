@@ -2,14 +2,12 @@
  * Created by Zhengfeng.Yao on 16/9/22.
  */
 import path from 'path';
-import chalk from 'chalk';
 import webpack from 'webpack';
 import getTS from './ts.config';
 import getBabel from './babel.config';
 import webpackMerge from 'webpack-merge';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import FlowStatusWebpackPlugin from 'flow-status-webpack-plugin';
 import { isValid, loadAegisConfig } from './utils';
 
 const cwd = process.cwd();
@@ -148,13 +146,6 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
         __DEV__: !!dev,
         'process.env.BROWSER': web,
         __BROWSER__: web
-      }),
-      new FlowStatusWebpackPlugin({
-        failOnError: true,
-        onSuccess: () => console.log(chalk.bold.green(`${target} flow check success!`)),
-        onError: () => {
-          console.log(chalk.bold.red(`${target} flow check failed!`));
-        }
       }),
       ...(web ? [
         new ExtractTextPlugin(!!dev ? '[name].css?[hash]' : '[name].[hash].css'),
