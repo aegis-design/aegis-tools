@@ -6,9 +6,9 @@ import webpack from 'webpack';
 import getTS from './ts.config';
 import getBabel from './babel.config';
 import webpackMerge from 'webpack-merge';
-// import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import { isValid, loadAegisConfig } from './utils';
+import { isValid, loadAegisConfig, loadPackage } from './utils';
 
 const cwd = process.cwd();
 
@@ -102,43 +102,57 @@ export function getBaseConfig(dev, verbose, autoprefixer) {
   }
 }
 
-// function style(dev, web, loader) {
-//   const query = `${!!dev ? 'sourceMap&' : 'minimize&'}modules&localIdentName=[local]`;
-//   if (web) {
-//     return ExtractTextPlugin.extract('style', `css?${query}!${loader}`);
-//   } else {
-//     return `css/locals?${query}!${loader}`;
-//   }
-// }
+function style(dev, web, loader) {
+  const query = `${!!dev ? 'sourceMap&' : 'minimize&'}modules&localIdentName=[local]`;
+  if (web) {
+    return ExtractTextPlugin.extract('style', `css?${query}!${loader}`);
+  } else {
+    return `css/locals?${query}!${loader}`;
+  }
+}
 
 function getCommonWebpackConfig(dev, web, options, verbose) {
   const target = web ? 'web' : 'node';
+  const pkg = loadPackage();
+  let theme = {};
+  if (pkg.theme && typeof(pkg.theme) === 'string') {
+    let cfgPath = pkg.theme;
+    // relative path
+    if (cfgPath.charAt(0) === '.') {
+      cfgPath = resolve(args.cwd, cfgPath);
+    }
+    const getThemeConfig = require(cfgPath);
+    theme = getThemeConfig();
+  } else if (pkg.theme && typeof(pkg.theme) === 'object') {
+    theme = pkg.theme;
+  }
+  const query = `{"sourceMap": true, "modifyVars": ${JSON.stringify(theme)}}`;
   return {
     devtool: web ? (!!dev ? 'cheap-module-eval-source-map' : false) : 'source-map',
     target: target,
-    // module: {
-    //   loaders: [
-    //     {
-    //       test: /\.sass$/,
-    //       loader: style(!!dev, web, 'postcss!sass?sourceMap'),
-    //     },
-    //     {
-    //       test: /\.scss$/,
-    //       loader: style(!!dev, web, 'postcss!sass?sourceMap'),
-    //     },
-    //     {
-    //       test: /\.styl$/,
-    //       loader: style(!!dev, web, 'postcss!stylus?sourceMap'),
-    //     },
-    //     {
-    //       test: /\.less$/,
-    //       loader: style(!!dev, web, 'postcss!less?sourceMap'),
-    //     }, {
-    //       test: /\.css$/,
-    //       loader: style(!!dev, web, 'postcss'),
-    //     }
-    //   ].filter(isValid)
-    // },
+    module: {
+      loaders: [
+        {
+          test: /\.sass$/,
+          loader: style(!!dev, web, `postcss!sass?${query}`),
+        },
+        {
+          test: /\.scss$/,
+          loader: style(!!dev, web, `postcss!sass?${query}`),
+        },
+        {
+          test: /\.styl$/,
+          loader: style(!!dev, web, `postcss!stylus?${query}`),
+        },
+        {
+          test: /\.less$/,
+          loader: style(!!dev, web, `postcss!less?${query}`),
+        }, {
+          test: /\.css$/,
+          loader: style(!!dev, web, 'postcss'),
+        }
+      ].filter(isValid)
+    },
     plugins: [
       !dev && new webpack.NoErrorsPlugin(),
       new webpack.DefinePlugin({
@@ -148,7 +162,7 @@ function getCommonWebpackConfig(dev, web, options, verbose) {
         __BROWSER__: web
       }),
       ...(web ? [
-        // new ExtractTextPlugin(options.fileName ? `${options.fileName}.css` : (!!dev ? '[name].css?[hash]' : '[name].[hash].css')),
+        new ExtractTextPlugin(options.fileName ? `${options.fileName}.css` : (!!dev ? '[name].css?[hash]' : '[name].[hash].css')),
         ...(!dev ? [
           new webpack.optimize.DedupePlugin(),
           new webpack.optimize.UglifyJsPlugin({
